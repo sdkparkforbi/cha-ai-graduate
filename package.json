@@ -1,0 +1,13 @@
+{
+  "name": "cha-ai-graduate",
+  "version": "1.0.0",
+  "description": "CHA University AI헬스케어융합학과 대학원 웹사이트",
+  "type": "module",
+  "scripts": {
+    "dev": "netlify dev",
+    "build": "echo 'Static site - no build needed'"
+  },
+  "devDependencies": {
+    "netlify-cli": "^17.0.0"
+  }
+}

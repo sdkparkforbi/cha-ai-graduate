@@ -1,0 +1,15 @@
+# 환경변수 (API 키 보호!)
+.env
+.env.local
+.env.production
+
+# Netlify
+.netlify/
+
+# Node
+node_modules/
+package-lock.json
+
+# OS
+.DS_Store
+Thumbs.db
