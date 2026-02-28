@@ -1730,7 +1730,6 @@
         avatar_id: AVATAR_CONFIG.avatarId,
         quality: "medium",
         voice: { voice_id: "15d128072e194dc399d2898967941897", rate: 1.0, emotion: "friendly" },
-        knowledge_base: "You are a silent avatar. Do not speak or generate any greeting. Only repeat text that is explicitly sent to you.",
         language: "ko",
         version: "v2",
         video_encoding: "H264"
@@ -1765,7 +1764,7 @@
       sendBtnEl.disabled = false;
 
       // 인사 메시지 (repeat 모드!)
-      const greeting = "안녕하세요! 차의과학대학교 AI헬스케어융합학과 대학원 상담을 도와드릴게요. 궁금하신 점을 편하게 말씀해 주세요.";
+      const greeting = "안녕하세요! 차 의과학 대학교, 에이 아이 헬스케어 융합학과 대학원 상담을 도와드릴게요. 궁금하신 점을 편하게 말씀해 주세요.";
       addChatBubble(greeting, "ai");
       isSpeaking = true;
       setVoiceState("speaking");
