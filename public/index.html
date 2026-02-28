@@ -624,6 +624,52 @@
       border-color: var(--accent);
     }
 
+    /* ─── Mic Button ─── */
+    .mic-btn {
+      width: 44px; height: 44px;
+      border-radius: 50%;
+      border: 2px solid rgba(0, 212, 170, 0.3);
+      background: rgba(0, 212, 170, 0.08);
+      color: var(--accent);
+      font-size: 1.2rem;
+      cursor: pointer; transition: all 0.3s;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+    .mic-btn:hover { background: rgba(0, 212, 170, 0.15); border-color: var(--accent); }
+    .mic-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+    .mic-btn.listening {
+      background: rgba(255, 107, 107, 0.15);
+      border-color: var(--danger); color: var(--danger);
+      animation: micPulse 1.2s ease-in-out infinite;
+    }
+    @keyframes micPulse {
+      0%, 100% { box-shadow: 0 0 0 0 rgba(255, 107, 107, 0.4); }
+      50% { box-shadow: 0 0 0 10px rgba(255, 107, 107, 0); }
+    }
+
+    /* ─── Chat Bubbles ─── */
+    .chat-history {
+      max-height: 200px; overflow-y: auto; margin-bottom: 0.75rem;
+      display: flex; flex-direction: column; gap: 0.5rem;
+      scrollbar-width: thin; scrollbar-color: var(--accent) transparent;
+    }
+    .chat-bubble {
+      padding: 0.5rem 0.8rem; border-radius: 12px;
+      font-size: 0.8rem; line-height: 1.5; max-width: 85%; word-break: break-word;
+    }
+    .chat-bubble.user {
+      background: rgba(0, 212, 170, 0.1); border: 1px solid rgba(0, 212, 170, 0.2);
+      color: var(--accent); align-self: flex-end;
+    }
+    .chat-bubble.ai {
+      background: rgba(138, 100, 255, 0.1); border: 1px solid rgba(138, 100, 255, 0.2);
+      color: #c4b5fd; align-self: flex-start;
+    }
+    .chat-bubble.thinking { color: var(--text-dim); font-style: italic; }
+    .chat-input-row { display: flex; gap: 0.5rem; align-items: center; }
+    .chat-input-row .chat-input { flex: 1; }
+
     .security-notice {
       background: rgba(255, 107, 107, 0.06);
       border: 1px solid rgba(255, 107, 107, 0.15);
@@ -1267,12 +1313,17 @@
           </button>
         </div>
 
-        <div class="chat-input-area">
+        <!-- 대화 히스토리 -->
+        <div class="chat-history" id="chatHistory"></div>
+
+        <!-- 입력 영역: 마이크 + 텍스트 + 전송 -->
+        <div class="chat-input-row">
+          <button class="mic-btn" id="micBtn" onclick="toggleMic()" disabled title="음성으로 질문하기">🎤</button>
           <input
             type="text"
             class="chat-input"
             id="taskInput"
-            placeholder="질문을 입력하세요... (예: 석사과정 지원 조건이 궁금해요)"
+            placeholder="질문을 입력하거나 🎤 마이크를 눌러 말씀하세요"
             disabled
             onkeydown="if(event.key==='Enter') sendMessage()"
           />
@@ -1290,7 +1341,7 @@
 
         <div class="security-notice">
           <span class="warn-icon">⚠️</span>
-          <span>본 데모는 HeyGen Streaming API를 사용합니다. 세션 수 제한(최대 3개 동시)이 있으며, 사용하지 않는 세션은 자동으로 종료됩니다.</span>
+          <span>AI 상담사가 학과 정보를 기반으로 답변합니다. 정확한 입학/행정 정보는 학과 사무실에 문의해 주세요.</span>
         </div>
       </div>
     </div>
@@ -1325,29 +1376,33 @@
 
 <script>
   // ═══════════════════════════════════════════════════════
-  //  HeyGen Streaming Avatar — Netlify Functions Proxy
-  //  ✅ API 키는 서버 측(Netlify 환경변수)에서만 관리
+  //  HeyGen Interactive Avatar + OpenAI GPT + 음성 대화
+  //  🎤 마이크 → 음성인식 → GPT 상담사 → 아바타 대답
   // ═══════════════════════════════════════════════════════
 
   const AVATAR_CONFIG = {
     avatarId: "e2eb35c947644f09820aa3a4f9c15488",
-    // API 키 없음! 서버 측 Netlify Functions가 처리
   };
 
   let sessionInfo = null;
   let room = null;
   let mediaStream = null;
   let sessionToken = null;
+  let chatHistory = [];        // GPT 대화 히스토리
+  let recognition = null;      // 음성인식 객체
+  let isListening = false;
 
-  const mediaEl     = document.getElementById("mediaElement");
-  const startBtnEl  = document.getElementById("startBtn");
-  const closeBtnEl  = document.getElementById("closeBtn");
-  const taskInput   = document.getElementById("taskInput");
-  const sendBtnEl   = document.getElementById("sendBtn");
-  const placeholder = document.getElementById("avatarPlaceholder");
-  const logEl       = document.getElementById("logArea");
-  const statusDot   = document.getElementById("statusDot");
-  const statusText  = document.getElementById("statusText");
+  const mediaEl      = document.getElementById("mediaElement");
+  const startBtnEl   = document.getElementById("startBtn");
+  const closeBtnEl   = document.getElementById("closeBtn");
+  const taskInput    = document.getElementById("taskInput");
+  const sendBtnEl    = document.getElementById("sendBtn");
+  const micBtnEl     = document.getElementById("micBtn");
+  const placeholder  = document.getElementById("avatarPlaceholder");
+  const logEl        = document.getElementById("logArea");
+  const statusDot    = document.getElementById("statusDot");
+  const statusText   = document.getElementById("statusText");
+  const chatHistoryEl = document.getElementById("chatHistory");
 
   function setStatus(text, active = false) {
     statusText.textContent = text;
@@ -1357,6 +1412,16 @@
   function log(msg) {
     logEl.classList.add("has-content");
     logEl.textContent = `[${new Date().toLocaleTimeString()}] ${msg}\n` + logEl.textContent;
+  }
+
+  // ── 채팅 버블 표시 ──
+  function addChatBubble(text, type) {
+    const bubble = document.createElement("div");
+    bubble.className = `chat-bubble ${type}`;
+    bubble.textContent = text;
+    chatHistoryEl.appendChild(bubble);
+    chatHistoryEl.scrollTop = chatHistoryEl.scrollHeight;
+    return bubble;
   }
 
   // ── 서버리스 함수 호출 헬퍼 ──
@@ -1379,7 +1444,28 @@
     }
   }
 
-  // ── 토큰 발급 (API 키는 서버에만 존재) ──
+  // ── GPT 상담사에게 질문 ──
+  async function askGPT(message) {
+    try {
+      const res = await fetch("/.netlify/functions/openai-chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message, history: chatHistory })
+      });
+      if (!res.ok) {
+        const errText = await res.text();
+        log(`GPT 오류 (${res.status}): ${errText}`);
+        return "죄송합니다, 잠시 후 다시 시도해 주세요.";
+      }
+      const data = await res.json();
+      return data.reply || "답변을 생성하지 못했습니다.";
+    } catch (err) {
+      log(`GPT 호출 실패: ${err.message}`);
+      return "네트워크 오류가 발생했습니다. 다시 시도해 주세요.";
+    }
+  }
+
+  // ── 토큰 발급 ──
   async function getSessionToken() {
     try {
       log("토큰 요청 중...");
@@ -1387,19 +1473,93 @@
         method: "POST",
         headers: { "Content-Type": "application/json" }
       });
-      log(`토큰 응답: ${res.status} ${res.statusText}`);
       if (!res.ok) {
         const errText = await res.text();
         log(`토큰 서버 오류: ${errText}`);
         return null;
       }
       const data = await res.json();
-      log(`토큰 데이터: ${JSON.stringify(data).substring(0, 100)}`);
       return data.data?.token;
     } catch (err) {
       log(`토큰 네트워크 오류: ${err.message}`);
       return null;
     }
+  }
+
+  // ── 음성인식 초기화 (Web Speech API) ──
+  function initSpeechRecognition() {
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SpeechRecognition) {
+      log("이 브라우저는 음성인식을 지원하지 않습니다");
+      micBtnEl.style.display = "none";
+      return;
+    }
+
+    recognition = new SpeechRecognition();
+    recognition.lang = "ko-KR";
+    recognition.interimResults = true;
+    recognition.continuous = false;
+    recognition.maxAlternatives = 1;
+
+    recognition.onstart = () => {
+      isListening = true;
+      micBtnEl.classList.add("listening");
+      micBtnEl.textContent = "⏹";
+      taskInput.placeholder = "🎤 듣고 있습니다... 말씀하세요";
+      setStatus("음성 인식 중...", true);
+    };
+
+    recognition.onresult = (event) => {
+      let interimTranscript = "";
+      let finalTranscript = "";
+
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const transcript = event.results[i][0].transcript;
+        if (event.results[i].isFinal) {
+          finalTranscript += transcript;
+        } else {
+          interimTranscript += transcript;
+        }
+      }
+
+      // 실시간 미리보기
+      taskInput.value = finalTranscript || interimTranscript;
+
+      // 최종 결과가 있으면 자동 전송
+      if (finalTranscript.trim()) {
+        taskInput.value = finalTranscript.trim();
+        setTimeout(() => sendMessage(), 300);
+      }
+    };
+
+    recognition.onerror = (event) => {
+      log(`음성인식 오류: ${event.error}`);
+      stopListening();
+      if (event.error === "not-allowed") {
+        alert("마이크 권한이 필요합니다. 브라우저 설정에서 마이크를 허용해 주세요.");
+      }
+    };
+
+    recognition.onend = () => {
+      stopListening();
+    };
+  }
+
+  function toggleMic() {
+    if (isListening) {
+      recognition.stop();
+    } else {
+      if (!recognition) initSpeechRecognition();
+      if (recognition) recognition.start();
+    }
+  }
+
+  function stopListening() {
+    isListening = false;
+    micBtnEl.classList.remove("listening");
+    micBtnEl.textContent = "🎤";
+    taskInput.placeholder = "질문을 입력하거나 🎤 마이크를 눌러 말씀하세요";
+    if (sessionInfo) setStatus("대화 준비 완료", true);
   }
 
   // ── 세션 시작 ──
@@ -1410,12 +1570,10 @@
     log("세션 시작 요청...");
 
     try {
-      // 1) 서버에서 토큰 발급
       sessionToken = await getSessionToken();
       if (!sessionToken) throw new Error("토큰 발급 실패");
-      log("토큰 발급 완료 (서버 측 처리)");
+      log("토큰 발급 완료");
 
-      // 2) 세션 생성 (서버 프록시 경유)
       const createRes = await callProxy("/v1/streaming.new", {
         avatar_id: AVATAR_CONFIG.avatarId,
         quality: "medium",
@@ -1429,7 +1587,6 @@
       sessionInfo = createRes.data;
       log(`세션 생성 완료: ${sessionInfo.session_id}`);
 
-      // 3) LiveKit 연결
       const lk = window.LivekitClient;
       room = new lk.Room({ adaptiveStream: true, dynacast: true });
 
@@ -1443,18 +1600,35 @@
       await room.connect(sessionInfo.url, sessionInfo.access_token);
       log("LiveKit 연결 완료");
 
-      // 4) 스트리밍 시작 (서버 프록시 경유)
       await callProxy("/v1/streaming.start", {
         session_id: sessionInfo.session_id
       });
 
       setStatus("대화 준비 완료", true);
-      log("아바타 활성화");
+      log("아바타 활성화 — 음성 또는 텍스트로 질문하세요");
+
+      // 대화 히스토리 초기화
+      chatHistory = [];
+      chatHistoryEl.innerHTML = "";
 
       closeBtnEl.disabled = false;
       taskInput.disabled = false;
       sendBtnEl.disabled = false;
+      micBtnEl.disabled = false;
       taskInput.focus();
+
+      // 인사 메시지
+      const greeting = "안녕하세요! 차의과학대학교 AI헬스케어융합학과 대학원에 관심을 가져주셔서 감사합니다. 궁금하신 점이 있으시면 말씀해 주세요.";
+      addChatBubble(greeting, "ai");
+      await callProxy("/v1/streaming.task", {
+        session_id: sessionInfo.session_id,
+        text: greeting,
+        task_type: "talk"
+      });
+
+      // 음성인식 초기화
+      initSpeechRecognition();
+
     } catch (err) {
       log(`오류: ${err.message}`);
       setStatus("오류 발생");
@@ -1464,19 +1638,49 @@
     }
   }
 
-  // ── 메시지 전송 ──
+  // ── 메시지 전송 (GPT 경유) ──
   async function sendMessage() {
     const text = taskInput.value.trim();
     if (!text || !sessionInfo) return;
 
     taskInput.value = "";
-    log(`전송: ${text}`);
+    taskInput.disabled = true;
+    sendBtnEl.disabled = true;
+    micBtnEl.disabled = true;
 
+    // 1) 사용자 메시지 표시
+    addChatBubble(text, "user");
+    log(`질문: ${text}`);
+
+    // 2) GPT에게 질문
+    const thinkingBubble = addChatBubble("답변을 생각하고 있어요...", "thinking");
+    setStatus("AI 답변 생성 중...", true);
+
+    const reply = await askGPT(text);
+
+    // 3) 대화 히스토리에 추가
+    chatHistory.push({ role: "user", content: text });
+    chatHistory.push({ role: "assistant", content: reply });
+
+    // 4) 답변 버블 교체
+    thinkingBubble.textContent = reply;
+    thinkingBubble.className = "chat-bubble ai";
+    chatHistoryEl.scrollTop = chatHistoryEl.scrollHeight;
+    log(`답변: ${reply.substring(0, 60)}...`);
+
+    // 5) 아바타가 답변 말하기
+    setStatus("아바타 답변 중...", true);
     await callProxy("/v1/streaming.task", {
       session_id: sessionInfo.session_id,
-      text,
+      text: reply,
       task_type: "talk"
     });
+
+    setStatus("대화 준비 완료", true);
+    taskInput.disabled = false;
+    sendBtnEl.disabled = false;
+    micBtnEl.disabled = false;
+    taskInput.focus();
   }
 
   function quickAsk(text) {
@@ -1491,6 +1695,8 @@
     setStatus("종료 중...");
     log("세션 종료 요청...");
 
+    if (recognition && isListening) recognition.stop();
+
     try {
       await callProxy("/v1/streaming.stop", {
         session_id: sessionInfo.session_id
@@ -1503,11 +1709,13 @@
     sessionInfo = null;
     mediaStream = null;
     sessionToken = null;
+    chatHistory = [];
 
     startBtnEl.disabled = false;
     closeBtnEl.disabled = true;
     taskInput.disabled = true;
     sendBtnEl.disabled = true;
+    micBtnEl.disabled = true;
     setStatus("대기 중");
     log("세션 종료");
   }
