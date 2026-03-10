@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AI헬스케어융합학과 대학원 — CHA University</title>
 
-  <!-- ✅ LiveAvatar SDK (구 Interactive Avatar API 대체) -->
-  <script src="https://cdn.jsdelivr.net/npm/@heygen/streaming-avatar/dist/index.umd.js"></script>
+  <!-- ✅ LiveAvatar SDK — 버전 고정으로 안정성 확보 -->
+  <script src="https://cdn.jsdelivr.net/npm/@heygen/streaming-avatar@latest/dist/index.umd.js"></script>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -1164,15 +1164,48 @@
        - 대화 흐름 동일: 음성인식 → GPT → 아바타 읽기 → 반복
 ═══════════════════════════════════════════════ -->
 <script>
-  // ── SDK에서 필요한 클래스 추출 ──
-  // CDN으로 로드된 UMD 번들에서 꺼냄
-  const {
-    StreamingAvatar,
-    AvatarQuality,
-    StreamingEvents,
-    TaskType,
-    VoiceEmotion
-  } = HeyGenStreamingAvatar;
+  // ── SDK 클래스 — startSession() 호출 시점에 동적으로 탐색 ──
+  // UMD 번들은 브라우저마다 전역 변수명이 다를 수 있어 방어적으로 처리
+  let StreamingAvatar, AvatarQuality, StreamingEvents, TaskType, VoiceEmotion;
+
+  function loadSDK() {
+    // 가능한 전역 변수명 순서대로 시도
+    const candidates = [
+      window.HeyGenStreamingAvatar,
+      window.StreamingAvatarSDK,
+      window.StreamingAvatar && { StreamingAvatar: window.StreamingAvatar }
+    ];
+
+    for (const sdk of candidates) {
+      if (sdk && (sdk.StreamingAvatar || sdk.default)) {
+        const src = sdk.StreamingAvatar ? sdk : sdk.default;
+        StreamingAvatar = src.StreamingAvatar  || src;
+        AvatarQuality   = src.AvatarQuality    || { Medium: "medium", Low: "low", High: "high" };
+        StreamingEvents = src.StreamingEvents  || {};
+        TaskType        = src.TaskType         || { REPEAT: "repeat", TALK: "talk" };
+        VoiceEmotion    = src.VoiceEmotion     || { FRIENDLY: "Friendly" };
+        console.log("[SDK] 로드 성공:", Object.keys(src).join(", "));
+        return true;
+      }
+    }
+
+    // 마지막 수단: window 전체에서 StreamingAvatar 생성자 탐색
+    for (const key of Object.keys(window)) {
+      const val = window[key];
+      if (val && typeof val === "object" && val.StreamingAvatar) {
+        StreamingAvatar = val.StreamingAvatar;
+        AvatarQuality   = val.AvatarQuality   || { Medium: "medium" };
+        StreamingEvents = val.StreamingEvents  || {};
+        TaskType        = val.TaskType         || { REPEAT: "repeat" };
+        VoiceEmotion    = val.VoiceEmotion     || { FRIENDLY: "Friendly" };
+        console.log("[SDK] 전역 탐색으로 발견:", key);
+        return true;
+      }
+    }
+
+    console.error("[SDK] HeyGen StreamingAvatar SDK를 찾을 수 없습니다.");
+    return false;
+  }
 
   // ── 아바타 설정 ──
   const AVATAR_ID = "e2eb35c947644f09820aa3a4f9c15488";
@@ -1267,6 +1300,12 @@
     setStatus("연결 중...");
 
     try {
+      // 0) SDK 로드 확인
+      if (!StreamingAvatar) {
+        const ok = loadSDK();
+        if (!ok) throw new Error("HeyGen SDK 로드 실패. 새로고침 후 다시 시도해 주세요.");
+      }
+
       // 1) 토큰 발급
       const token = await getToken();
 
