@@ -80,8 +80,7 @@ cha-ai-graduate/
 3. **"Add a variable"** 클릭
 4. 입력:
    - **Key**: `HEYGEN_API_KEY`
-   - **Values**: `fed6ad41-1491-11f1-a99e-066a7fa2e369`
-     (실제 HeyGen API 키로 교체)
+   - **Values**: `XXX` (실제 HeyGen API 키로 교체)
 5. **저장** → **Deploys** 탭에서 **"Trigger deploy"** → **"Deploy site"**
 
 ### Step 4: 사이트 이름 변경 (선택)
