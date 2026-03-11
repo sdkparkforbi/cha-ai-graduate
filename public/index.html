@@ -4,7 +4,9 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>AI헬스케어융합학과 대학원 — CHA University</title>
-  <script src="https://cdn.jsdelivr.net/npm/livekit-client/dist/livekit-client.umd.min.js"></script>
+
+  <!-- ✅ LiveAvatar SDK — 버전 고정으로 안정성 확보 -->
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&family=Playfair+Display:wght@700;900&family=Space+Mono:wght@400;700&family=Outfit:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -533,213 +535,7 @@
     .voice-name { font-weight: 700; font-size: 0.85rem; }
     .voice-role { color: var(--text-dim); font-size: 0.72rem; }
 
-    /* ─── AI Chat ─── */
-    .avatar-container {
-      max-width: 720px; margin: 0 auto;
-      background: var(--surface-2);
-      border: 1px solid rgba(255,255,255,0.05);
-      border-radius: 20px; overflow: hidden;
-    }
-    .avatar-header {
-      display: flex; justify-content: space-between; align-items: center;
-      padding: 0.75rem 1.25rem;
-      background: rgba(0,0,0,0.3);
-      border-bottom: 1px solid rgba(255,255,255,0.05);
-    }
-    .avatar-header-left { display: flex; align-items: center; gap: 0.5rem; }
-    .avatar-status-dot {
-      width: 8px; height: 8px; border-radius: 50%;
-      background: var(--text-dim);
-    }
-    .avatar-status-dot.active { background: var(--accent); animation: pulse 2s infinite; }
-    .avatar-status-text { font-size: 0.75rem; color: var(--text-dim); font-weight: 500; }
-
-    .avatar-video-area {
-      position: relative; aspect-ratio: 16/9;
-      background: rgba(0,0,0,0.4);
-    }
-    .avatar-video-area video {
-      width: 100%; height: 100%; object-fit: cover;
-    }
-    .avatar-placeholder {
-      position: absolute; inset: 0;
-      display: flex; flex-direction: column;
-      align-items: center; justify-content: center;
-      color: var(--text-dim); text-align: center;
-    }
-    .avatar-placeholder .icon { font-size: 3rem; margin-bottom: 1rem; opacity: 0.5; }
-    .avatar-placeholder p { font-size: 0.85rem; line-height: 1.6; }
-
-    .avatar-controls { padding: 1.25rem; }
-    .avatar-btn-row { display: flex; gap: 0.75rem; margin-bottom: 0.75rem; }
-    .avatar-btn {
-      flex: 1; padding: 0.75rem; border: none; border-radius: 10px;
-      font-weight: 700; font-size: 0.85rem; cursor: pointer;
-      font-family: inherit; transition: all 0.3s;
-    }
-    .avatar-btn.start { background: var(--gradient-1); color: var(--primary); }
-    .avatar-btn.start:hover { box-shadow: 0 4px 16px var(--accent-glow); }
-    .avatar-btn.stop { background: rgba(255, 107, 107, 0.15); color: var(--danger); border: 1px solid rgba(255, 107, 107, 0.2); }
-    .avatar-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-
-    .chat-input-area { display: flex; gap: 0.5rem; }
-    .chat-input {
-      flex: 1; padding: 0.75rem 1rem;
-      background: rgba(0,0,0,0.3);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 10px; color: var(--text);
-      font-size: 0.85rem; font-family: inherit; outline: none;
-      transition: border-color 0.3s;
-    }
-    .chat-input:focus { border-color: var(--accent); }
-    .chat-input::placeholder { color: var(--text-dim); }
-    .chat-send-btn {
-      padding: 0.75rem 1.2rem; background: var(--gradient-1);
-      border: none; border-radius: 10px; color: var(--primary);
-      font-weight: 700; font-size: 0.85rem; cursor: pointer;
-      transition: all 0.3s; font-family: inherit;
-    }
-    .chat-send-btn:hover { box-shadow: 0 4px 16px var(--accent-glow); }
-    .chat-send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
-
-    .avatar-log {
-      margin-top: 0.75rem; padding: 0.6rem 1rem;
-      background: rgba(0,0,0,0.3); border-radius: 8px;
-      font-family: 'Space Mono', monospace; font-size: 0.7rem;
-      color: var(--text-dim); max-height: 80px; overflow-y: auto;
-      display: none;
-    }
-    .avatar-log.has-content { display: block; }
-
-    .quick-prompts { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-top: 0.75rem; }
-    .quick-prompt {
-      padding: 0.35rem 0.75rem;
-      background: rgba(0, 212, 170, 0.06);
-      border: 1px solid rgba(0, 212, 170, 0.12);
-      border-radius: 100px; font-size: 0.72rem; color: var(--accent);
-      cursor: pointer; transition: all 0.2s; font-family: inherit;
-    }
-    .quick-prompt:hover {
-      background: rgba(0, 212, 170, 0.12);
-      border-color: var(--accent);
-    }
-
-    /* ─── Mic Button ─── */
-    .mic-btn {
-      width: 44px; height: 44px;
-      border-radius: 50%;
-      border: 2px solid rgba(0, 212, 170, 0.3);
-      background: rgba(0, 212, 170, 0.08);
-      color: var(--accent);
-      font-size: 1.2rem;
-      cursor: pointer; transition: all 0.3s;
-      display: flex; align-items: center; justify-content: center;
-      flex-shrink: 0;
-    }
-    .mic-btn:hover { background: rgba(0, 212, 170, 0.15); border-color: var(--accent); }
-    .mic-btn:disabled { opacity: 0.3; cursor: not-allowed; }
-    .mic-btn.listening {
-      background: rgba(255, 107, 107, 0.15);
-      border-color: var(--danger); color: var(--danger);
-      animation: micPulse 1.2s ease-in-out infinite;
-    }
-    @keyframes micPulse {
-      0%, 100% { box-shadow: 0 0 0 0 rgba(255, 107, 107, 0.4); }
-      50% { box-shadow: 0 0 0 10px rgba(255, 107, 107, 0); }
-    }
-
-    /* ─── Chat Bubbles ─── */
-    .chat-history {
-      max-height: 200px; overflow-y: auto; margin-bottom: 0.75rem;
-      display: flex; flex-direction: column; gap: 0.5rem;
-      scrollbar-width: thin; scrollbar-color: var(--accent) transparent;
-    }
-    .chat-bubble {
-      padding: 0.5rem 0.8rem; border-radius: 12px;
-      font-size: 0.8rem; line-height: 1.5; max-width: 85%; word-break: break-word;
-    }
-    .chat-bubble.user {
-      background: rgba(0, 212, 170, 0.1); border: 1px solid rgba(0, 212, 170, 0.2);
-      color: var(--accent); align-self: flex-end;
-    }
-    .chat-bubble.ai {
-      background: rgba(138, 100, 255, 0.1); border: 1px solid rgba(138, 100, 255, 0.2);
-      color: #c4b5fd; align-self: flex-start;
-    }
-    .chat-bubble.thinking { color: var(--text-dim); font-style: italic; }
-    .chat-input-row { display: flex; gap: 0.5rem; align-items: center; }
-    .chat-input-row .chat-input { flex: 1; }
-
-    /* ─── Voice Status Indicator ─── */
-    .voice-status {
-      display: flex; align-items: center; justify-content: center;
-      gap: 0.6rem; padding: 0.7rem 1rem;
-      background: rgba(0, 212, 170, 0.06);
-      border: 1px solid rgba(0, 212, 170, 0.15);
-      border-radius: 12px; margin-bottom: 0.6rem;
-    }
-    .voice-status.speaking {
-      background: rgba(138, 100, 255, 0.06);
-      border-color: rgba(138, 100, 255, 0.2);
-    }
-    .voice-status.thinking-state {
-      background: rgba(255, 180, 50, 0.06);
-      border-color: rgba(255, 180, 50, 0.2);
-    }
-    .voice-indicator { display: flex; gap: 3px; align-items: center; }
-    .voice-dot {
-      width: 6px; height: 6px; border-radius: 50%;
-      background: var(--accent);
-      animation: voicePulse 1.4s ease-in-out infinite;
-    }
-    .voice-dot:nth-child(2) { animation-delay: 0.2s; }
-    .voice-dot:nth-child(3) { animation-delay: 0.4s; }
-    .voice-status.speaking .voice-dot { background: #a78bfa; }
-    .voice-status.thinking-state .voice-dot { background: #fbbf24; }
-    @keyframes voicePulse {
-      0%, 100% { transform: scale(1); opacity: 0.5; }
-      50% { transform: scale(1.6); opacity: 1; }
-    }
-    .voice-label { font-size: 0.78rem; color: var(--text-dim); }
-
-    .security-notice {
-      background: rgba(255, 107, 107, 0.06);
-      border: 1px solid rgba(255, 107, 107, 0.15);
-      border-radius: 10px; padding: 0.75rem 1rem;
-      font-size: 0.72rem; color: #ffaaaa; margin-top: 0.75rem;
-      display: flex; align-items: flex-start; gap: 0.5rem;
-    }
-    .security-notice .warn-icon { flex-shrink: 0; }
-
-    .spinner {
-      width: 20px; height: 20px;
-      border: 2px solid rgba(10, 22, 40, 0.3);
-      border-top-color: var(--primary);
-      border-radius: 50%; animation: spin 0.8s linear infinite; display: none;
-    }
-    .avatar-btn.loading .spinner { display: inline-block; }
-    .avatar-btn.loading .btn-text { display: none; }
-
-    /* ─── Footer ─── */
-    footer {
-      padding: 3rem 2rem;
-      border-top: 1px solid rgba(255,255,255,0.04);
-      text-align: center;
-    }
-    .footer-content { max-width: 600px; margin: 0 auto; }
-    .footer-brand { font-size: 1.1rem; font-weight: 700; margin-bottom: 0.5rem; }
-    .footer-brand span { color: var(--accent); }
-    .footer-info { color: var(--text-dim); font-size: 0.78rem; line-height: 1.8; }
-    .footer-links {
-      margin-top: 1.5rem; display: flex; justify-content: center; gap: 1.5rem;
-    }
-    .footer-links a {
-      color: var(--text-dim); text-decoration: none;
-      font-size: 0.78rem; transition: color 0.3s;
-    }
-    .footer-links a:hover { color: var(--accent); }
-
-    /* ─── Floating PIP Widget ─── */
+    /* ─── PIP Widget ─── */
     .pip-widget {
       position: fixed; bottom: 2rem; right: 2rem; z-index: 1000;
       width: 380px;
@@ -818,11 +614,63 @@
     .pip-btn.stop { background: rgba(255,107,107,0.15); color: var(--danger); border: 1px solid rgba(255,107,107,0.2); }
     .pip-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
+    .spinner {
+      width: 16px; height: 16px;
+      border: 2px solid rgba(10, 22, 40, 0.3);
+      border-top-color: var(--primary);
+      border-radius: 50%; animation: spin 0.8s linear infinite; display: none;
+    }
+    .pip-btn.loading .spinner { display: inline-block; }
+    .pip-btn.loading .btn-text { display: none; }
+
     .pip-chat {
       flex: 1; overflow-y: auto; padding: 0.5rem 0.8rem;
       max-height: 20vh;
     }
-    .pip-chat .chat-bubble { font-size: 0.78rem; padding: 0.5rem 0.7rem; margin-bottom: 0.4rem; }
+
+    .chat-bubble {
+      padding: 0.5rem 0.8rem; border-radius: 12px;
+      font-size: 0.8rem; line-height: 1.5; max-width: 85%;
+      word-break: break-word; margin-bottom: 0.4rem;
+    }
+    .chat-bubble.user {
+      background: rgba(0, 212, 170, 0.1); border: 1px solid rgba(0, 212, 170, 0.2);
+      color: var(--accent); align-self: flex-end; margin-left: auto;
+    }
+    .chat-bubble.ai {
+      background: rgba(138, 100, 255, 0.1); border: 1px solid rgba(138, 100, 255, 0.2);
+      color: #c4b5fd;
+    }
+
+    .pip-voice-status {
+      display: none; align-items: center; justify-content: center;
+      gap: 0.5rem; padding: 0.4rem 0.8rem;
+      font-size: 0.75rem; color: var(--text-dim);
+    }
+    .pip-voice-status.active { display: flex; }
+    .voice-indicator { display: flex; gap: 3px; align-items: center; }
+    .voice-dot {
+      width: 5px; height: 5px; border-radius: 50%;
+      background: var(--accent);
+      animation: voicePulse 1.4s ease-in-out infinite;
+    }
+    .voice-dot:nth-child(2) { animation-delay: 0.2s; }
+    .voice-dot:nth-child(3) { animation-delay: 0.4s; }
+    .pip-voice-status.speaking .voice-dot { background: #a78bfa; }
+    .pip-voice-status.thinking-state .voice-dot { background: #fbbf24; }
+    @keyframes voicePulse {
+      0%, 100% { transform: scale(1); opacity: 0.5; }
+      50% { transform: scale(1.6); opacity: 1; }
+    }
+
+    .pip-quick-row { display: flex; flex-wrap: wrap; gap: 0.3rem; padding: 0 0.8rem 0.5rem; }
+    .pip-quick-btn {
+      padding: 0.3rem 0.6rem; font-size: 0.68rem;
+      background: rgba(0,212,170,0.08); border: 1px solid rgba(0,212,170,0.15);
+      border-radius: 20px; color: var(--accent); cursor: pointer;
+      font-family: inherit; transition: all 0.2s;
+    }
+    .pip-quick-btn:hover { background: rgba(0,212,170,0.15); }
 
     .pip-input-row { display: flex; gap: 0.4rem; padding: 0.5rem 0.8rem 0.6rem; }
     .pip-input {
@@ -841,21 +689,7 @@
       font-weight: 700; font-size: 0.78rem; cursor: pointer;
       transition: all 0.3s; font-family: inherit;
     }
-
-    .pip-quick-row { display: flex; flex-wrap: wrap; gap: 0.3rem; padding: 0 0.8rem 0.5rem; }
-    .pip-quick-btn {
-      padding: 0.3rem 0.6rem; font-size: 0.68rem;
-      background: rgba(0,212,170,0.08); border: 1px solid rgba(0,212,170,0.15);
-      border-radius: 20px; color: var(--accent); cursor: pointer;
-      font-family: inherit; transition: all 0.2s;
-    }
-    .pip-quick-btn:hover { background: rgba(0,212,170,0.15); }
-
-    .pip-voice-status {
-      display: none; align-items: center; justify-content: center;
-      gap: 0.5rem; padding: 0.4rem 0.8rem;
-    }
-    .pip-voice-status.active { display: flex; }
+    .pip-send-btn:disabled { opacity: 0.4; cursor: not-allowed; }
 
     /* ─── Floating Button ─── */
     .floating-avatar-btn {
@@ -908,7 +742,6 @@
       .stats-grid, .roadmap-timeline, .showcase-grid, .voices-grid, .labs-grid { grid-template-columns: 1fr; }
       .building-wrapper { grid-template-columns: 1fr; }
       .building-specs { grid-template-columns: 1fr; }
-      .avatar-btn-row { flex-direction: column; }
       .hero-stats { flex-direction: column; gap: 1.5rem; }
       .expand-grid { grid-template-columns: repeat(2, 1fr); }
     }
@@ -1046,154 +879,20 @@
     <span class="section-eyebrow">RESEARCH LABORATORIES</span>
     <h2 class="section-title">12개 전문 연구실</h2>
     <p class="section-desc">AI와 헬스케어 융합 분야를 이끄는 전문 연구실에서 세계 수준의 연구를 수행합니다</p>
-
     <div class="labs-grid">
-      <div class="lab-card">
-        <div class="lab-icon">🏢</div>
-        <div class="lab-name">AI-Driven Organization Lab</div>
-        <div class="lab-abbr">ADO LAB</div>
-        <div class="lab-prof">👤 김억환 교수</div>
-        <div class="lab-tags">
-          <span class="lab-tag">Organization Science</span>
-          <span class="lab-tag">AI Management</span>
-          <span class="lab-tag">Digital Transformation</span>
-        </div>
-      </div>
-
-      <div class="lab-card">
-        <div class="lab-icon">👁️</div>
-        <div class="lab-name">Visual Intelligence & Ad Tech Lab</div>
-        <div class="lab-abbr">VIAT LAB</div>
-        <div class="lab-prof">👤 김정환 교수</div>
-        <div class="lab-tags">
-          <span class="lab-tag">Computer Vision</span>
-          <span class="lab-tag">Ad Technology</span>
-          <span class="lab-tag">Visual AI</span>
-        </div>
-      </div>
-
-      <div class="lab-card">
-        <div class="lab-icon">💬</div>
-        <div class="lab-name">InterACT AI Lab</div>
-        <div class="lab-abbr">InterACT LAB</div>
-        <div class="lab-prof">👤 박노일 교수</div>
-        <div class="lab-tags">
-          <span class="lab-tag">AI Interaction</span>
-          <span class="lab-tag">Communication</span>
-          <span class="lab-tag">HCI</span>
-        </div>
-      </div>
-
-      <div class="lab-card">
-        <div class="lab-icon">📊</div>
-        <div class="lab-name">AI Forecasting Analytics Lab</div>
-        <div class="lab-abbr">AI ForA LAB</div>
-        <div class="lab-prof">👤 박대근 교수</div>
-        <div class="lab-tags">
-          <span class="lab-tag">Forecasting</span>
-          <span class="lab-tag">Predictive Analytics</span>
-          <span class="lab-tag">Data Science</span>
-        </div>
-      </div>
-
-      <div class="lab-card">
-        <div class="lab-icon">🎨</div>
-        <div class="lab-name">Intelligent Visual Art & Communication Lab</div>
-        <div class="lab-abbr">IVAC LAB</div>
-        <div class="lab-prof">👤 박진훈 교수</div>
-        <div class="lab-tags">
-          <span class="lab-tag">Visual Art</span>
-          <span class="lab-tag">AI Communication</span>
-          <span class="lab-tag">Creative AI</span>
-        </div>
-      </div>
-
-      <div class="lab-card">
-        <div class="lab-icon">🖼️</div>
-        <div class="lab-name">Multimodal AI & Medical Imaging Lab</div>
-        <div class="lab-abbr">MAMI LAB</div>
-        <div class="lab-prof">👤 배장표 교수</div>
-        <div class="lab-tags">
-          <span class="lab-tag">Multimodal AI</span>
-          <span class="lab-tag">Medical Imaging</span>
-          <span class="lab-tag">Image Processing</span>
-        </div>
-      </div>
-
-      <div class="lab-card">
-        <div class="lab-icon">🔗</div>
-        <div class="lab-name">AI & Blockchain Healthcare Data Lab</div>
-        <div class="lab-abbr">ABHD LAB</div>
-        <div class="lab-prof">👤 이상민 교수</div>
-        <div class="lab-tags">
-          <span class="lab-tag">Artificial Intelligence</span>
-          <span class="lab-tag">Blockchain</span>
-          <span class="lab-tag">Healthcare DB</span>
-        </div>
-      </div>
-
-      <div class="lab-card">
-        <div class="lab-icon">📈</div>
-        <div class="lab-name">Computational Marketing Lab</div>
-        <div class="lab-abbr">CM LAB</div>
-        <div class="lab-prof">👤 이희정 교수</div>
-        <div class="lab-tags">
-          <span class="lab-tag">Computational Marketing</span>
-          <span class="lab-tag">Consumer Analytics</span>
-          <span class="lab-tag">Marketing AI</span>
-        </div>
-      </div>
-
-      <div class="lab-card">
-        <div class="lab-icon">🔬</div>
-        <div class="lab-name">Science Translation & AI Intelligence Lab</div>
-        <div class="lab-abbr">STAI LAB</div>
-        <div class="lab-prof">👤 장정헌 교수</div>
-        <div class="lab-tags">
-          <span class="lab-tag">Science Translation</span>
-          <span class="lab-tag">AI Intelligence</span>
-          <span class="lab-tag">Knowledge Systems</span>
-        </div>
-      </div>
-
-      <div class="lab-card">
-        <div class="lab-icon">🧬</div>
-        <div class="lab-name">Precision Translational AI Lab</div>
-        <div class="lab-abbr">PTA LAB</div>
-        <div class="lab-prof">👤 정경인 교수</div>
-        <div class="lab-tags">
-          <span class="lab-tag">Precision Medicine</span>
-          <span class="lab-tag">Translational AI</span>
-          <span class="lab-tag">Bioinformatics</span>
-        </div>
-      </div>
-
-      <div class="lab-card">
-        <div class="lab-icon">🏃</div>
-        <div class="lab-name">Predictive Sports Medicine Lab</div>
-        <div class="lab-abbr">PSM LAB</div>
-        <div class="lab-prof">👤 정석률 교수</div>
-        <div class="lab-tags">
-          <span class="lab-tag">Sports Medicine</span>
-          <span class="lab-tag">Predictive Modeling</span>
-          <span class="lab-tag">Biomechanics</span>
-        </div>
-      </div>
-
-      <div class="lab-card">
-        <div class="lab-icon">🧠</div>
-        <div class="lab-name">Machine Intelligence for Healthcare Lab</div>
-        <div class="lab-abbr">MIH LAB</div>
-        <div class="lab-prof">👤 조백환 교수</div>
-        <div class="lab-tags">
-          <span class="lab-tag">Machine Intelligence</span>
-          <span class="lab-tag">Healthcare AI</span>
-          <span class="lab-tag">Deep Learning</span>
-        </div>
-      </div>
+      <div class="lab-card"><div class="lab-icon">🏢</div><div class="lab-name">AI-Driven Organization Lab</div><div class="lab-abbr">ADO LAB</div><div class="lab-prof">👤 김억환 교수</div><div class="lab-tags"><span class="lab-tag">Organization Science</span><span class="lab-tag">AI Management</span><span class="lab-tag">Digital Transformation</span></div></div>
+      <div class="lab-card"><div class="lab-icon">👁️</div><div class="lab-name">Visual Intelligence & Ad Tech Lab</div><div class="lab-abbr">VIAT LAB</div><div class="lab-prof">👤 김정환 교수</div><div class="lab-tags"><span class="lab-tag">Computer Vision</span><span class="lab-tag">Ad Technology</span><span class="lab-tag">Visual AI</span></div></div>
+      <div class="lab-card"><div class="lab-icon">💬</div><div class="lab-name">InterACT AI Lab</div><div class="lab-abbr">InterACT LAB</div><div class="lab-prof">👤 박노일 교수</div><div class="lab-tags"><span class="lab-tag">AI Interaction</span><span class="lab-tag">Communication</span><span class="lab-tag">HCI</span></div></div>
+      <div class="lab-card"><div class="lab-icon">📊</div><div class="lab-name">AI Forecasting Analytics Lab</div><div class="lab-abbr">AI ForA LAB</div><div class="lab-prof">👤 박대근 교수</div><div class="lab-tags"><span class="lab-tag">Forecasting</span><span class="lab-tag">Predictive Analytics</span><span class="lab-tag">Data Science</span></div></div>
+      <div class="lab-card"><div class="lab-icon">🎨</div><div class="lab-name">Intelligent Visual Art & Communication Lab</div><div class="lab-abbr">IVAC LAB</div><div class="lab-prof">👤 박진훈 교수</div><div class="lab-tags"><span class="lab-tag">Visual Art</span><span class="lab-tag">AI Communication</span><span class="lab-tag">Creative AI</span></div></div>
+      <div class="lab-card"><div class="lab-icon">🖼️</div><div class="lab-name">Multimodal AI & Medical Imaging Lab</div><div class="lab-abbr">MAMI LAB</div><div class="lab-prof">👤 배장표 교수</div><div class="lab-tags"><span class="lab-tag">Multimodal AI</span><span class="lab-tag">Medical Imaging</span><span class="lab-tag">Image Processing</span></div></div>
+      <div class="lab-card"><div class="lab-icon">🔗</div><div class="lab-name">AI & Blockchain Healthcare Data Lab</div><div class="lab-abbr">ABHD LAB</div><div class="lab-prof">👤 이상민 교수</div><div class="lab-tags"><span class="lab-tag">Artificial Intelligence</span><span class="lab-tag">Blockchain</span><span class="lab-tag">Healthcare DB</span></div></div>
+      <div class="lab-card"><div class="lab-icon">📈</div><div class="lab-name">Computational Marketing Lab</div><div class="lab-abbr">CM LAB</div><div class="lab-prof">👤 이희정 교수</div><div class="lab-tags"><span class="lab-tag">Computational Marketing</span><span class="lab-tag">Consumer Analytics</span><span class="lab-tag">Marketing AI</span></div></div>
+      <div class="lab-card"><div class="lab-icon">🔬</div><div class="lab-name">Science Translation & AI Intelligence Lab</div><div class="lab-abbr">STAI LAB</div><div class="lab-prof">👤 장정헌 교수</div><div class="lab-tags"><span class="lab-tag">Science Translation</span><span class="lab-tag">AI Intelligence</span><span class="lab-tag">Knowledge Systems</span></div></div>
+      <div class="lab-card"><div class="lab-icon">🧬</div><div class="lab-name">Precision Translational AI Lab</div><div class="lab-abbr">PTA LAB</div><div class="lab-prof">👤 정경인 교수</div><div class="lab-tags"><span class="lab-tag">Precision Medicine</span><span class="lab-tag">Translational AI</span><span class="lab-tag">Bioinformatics</span></div></div>
+      <div class="lab-card"><div class="lab-icon">🏃</div><div class="lab-name">Predictive Sports Medicine Lab</div><div class="lab-abbr">PSM LAB</div><div class="lab-prof">👤 정석률 교수</div><div class="lab-tags"><span class="lab-tag">Sports Medicine</span><span class="lab-tag">Predictive Modeling</span><span class="lab-tag">Biomechanics</span></div></div>
+      <div class="lab-card"><div class="lab-icon">🧠</div><div class="lab-name">Machine Intelligence for Healthcare Lab</div><div class="lab-abbr">MIH LAB</div><div class="lab-prof">👤 조백환 교수</div><div class="lab-tags"><span class="lab-tag">Machine Intelligence</span><span class="lab-tag">Healthcare AI</span><span class="lab-tag">Deep Learning</span></div></div>
     </div>
-
-    <!-- Expanding Labs -->
     <div class="expand-section">
       <div class="expand-title">🚀 확장 예정 연구 분야</div>
       <div class="expand-desc">AI헬스케어융합학과는 다학제 융합을 위해 추가 연구 랩을 확장합니다</div>
@@ -1216,76 +915,34 @@
     <span class="section-eyebrow">AI CONVERGENCE VISION CENTER</span>
     <h2 class="section-title">AI융복합비전센터</h2>
     <p class="section-desc">포천시 선단동에 건립 예정인 대학원 연구동 + 기숙사동. 200명의 연구자를 위한 최첨단 공간</p>
-
     <div class="building-wrapper">
-      <!-- Building Visual -->
       <div class="building-visual">
         <div style="text-align:center; margin-bottom:1.5rem;">
           <div style="font-family:'Outfit',sans-serif; font-size:0.7rem; font-weight:700; color:var(--accent); letter-spacing:0.15em; margin-bottom:0.5rem;">🔬 연구동 B1F + 6F</div>
           <div style="font-size:0.75rem; color:var(--text-dim);">200명 연구공간 · 세미나실 · 행정실</div>
         </div>
         <div class="building-floors">
-          <div class="building-floor">
-            <div class="floor-label">6F</div>
-            <div class="floor-desc">연구실 D — 개인 데스크 50명 · 휴게실</div>
-          </div>
-          <div class="building-floor">
-            <div class="floor-label">5F</div>
-            <div class="floor-desc">연구실 C — 개인 데스크 50명 · 교수실</div>
-          </div>
-          <div class="building-floor">
-            <div class="floor-label">4F</div>
-            <div class="floor-desc">연구실 B — 개인 데스크 50명 · 소회의실</div>
-          </div>
-          <div class="building-floor">
-            <div class="floor-label">3F</div>
-            <div class="floor-desc">연구실 A — 개인 데스크 50명 · 소회의실</div>
-          </div>
-          <div class="building-floor">
-            <div class="floor-label">2F</div>
-            <div class="floor-desc">대형 세미나실 (80석) · 소회의실 ×2</div>
-          </div>
-          <div class="building-floor">
-            <div class="floor-label">1F</div>
-            <div class="floor-desc">로비 · 행정실 · 편의시설</div>
-          </div>
-          <div class="building-floor">
-            <div class="floor-label">B1</div>
-            <div class="floor-desc">주차장 (40대) · 기계실</div>
-          </div>
+          <div class="building-floor"><div class="floor-label">6F</div><div class="floor-desc">연구실 D — 개인 데스크 50명 · 휴게실</div></div>
+          <div class="building-floor"><div class="floor-label">5F</div><div class="floor-desc">연구실 C — 개인 데스크 50명 · 교수실</div></div>
+          <div class="building-floor"><div class="floor-label">4F</div><div class="floor-desc">연구실 B — 개인 데스크 50명 · 소회의실</div></div>
+          <div class="building-floor"><div class="floor-label">3F</div><div class="floor-desc">연구실 A — 개인 데스크 50명 · 소회의실</div></div>
+          <div class="building-floor"><div class="floor-label">2F</div><div class="floor-desc">대형 세미나실 (80석) · 소회의실 ×2</div></div>
+          <div class="building-floor"><div class="floor-label">1F</div><div class="floor-desc">로비 · 행정실 · 편의시설</div></div>
+          <div class="building-floor"><div class="floor-label">B1</div><div class="floor-desc">주차장 (40대) · 기계실</div></div>
         </div>
         <div style="text-align:center; margin-top:1.5rem; padding-top:1rem; border-top:1px solid rgba(255,255,255,0.05);">
           <div style="font-family:'Outfit',sans-serif; font-size:0.7rem; font-weight:700; color:#A78BFA; letter-spacing:0.15em; margin-bottom:0.5rem;">🛏️ 기숙사동 B1F + 7F</div>
           <div style="font-size:0.75rem; color:var(--text-dim);">200명 1인실 · 세탁실 · 휴게실 · 연결통로</div>
         </div>
       </div>
-
-      <!-- Building Info -->
       <div class="building-info">
         <h3>세계 수준의<br><span class="accent">연구 인프라</span>를 구축합니다</h3>
-        <p>
-          적벽돌 외관의 연구동(B1+6F)과 기숙사동(B1+7F)이 연결 통로로 이어지며,
-          연구자들이 연구에만 몰입할 수 있는 최적의 환경을 제공합니다.
-          200명의 석·박사 연구원을 위한 개인 데스크, 80석 대형 세미나실,
-          그리고 200명 규모의 1인실 기숙사가 갖춰집니다.
-        </p>
+        <p>적벽돌 외관의 연구동(B1+6F)과 기숙사동(B1+7F)이 연결 통로로 이어지며, 연구자들이 연구에만 몰입할 수 있는 최적의 환경을 제공합니다.</p>
         <div class="building-specs">
-          <div class="spec-item">
-            <div class="spec-value">200명</div>
-            <div class="spec-label">연구 공간</div>
-          </div>
-          <div class="spec-item">
-            <div class="spec-value">200명</div>
-            <div class="spec-label">1인실 기숙사</div>
-          </div>
-          <div class="spec-item">
-            <div class="spec-value">80석</div>
-            <div class="spec-label">세미나실</div>
-          </div>
-          <div class="spec-item">
-            <div class="spec-value">~7,500㎡</div>
-            <div class="spec-label">총 연면적</div>
-          </div>
+          <div class="spec-item"><div class="spec-value">200명</div><div class="spec-label">연구 공간</div></div>
+          <div class="spec-item"><div class="spec-value">200명</div><div class="spec-label">1인실 기숙사</div></div>
+          <div class="spec-item"><div class="spec-value">80석</div><div class="spec-label">세미나실</div></div>
+          <div class="spec-item"><div class="spec-value">~7,500㎡</div><div class="spec-label">총 연면적</div></div>
         </div>
       </div>
     </div>
@@ -1299,50 +956,10 @@
     <h2 class="section-title">석·박사 교육 과정</h2>
     <p class="section-desc">체계적 연구 역량을 구축하고 SCIE/SSCI급 국제 논문을 목표로 합니다</p>
     <div class="roadmap-timeline">
-      <div class="roadmap-card">
-        <div class="roadmap-year">MASTER'S 1차년도</div>
-        <div class="roadmap-title">연구 기초 + AI 리터러시</div>
-        <div class="roadmap-tags">
-          <span class="roadmap-tag">보건통계학</span>
-          <span class="roadmap-tag">머신러닝</span>
-          <span class="roadmap-tag">의료AI 개론</span>
-          <span class="roadmap-tag">연구방법론</span>
-          <span class="roadmap-tag">Python/R</span>
-        </div>
-      </div>
-      <div class="roadmap-card">
-        <div class="roadmap-year">MASTER'S 2차년도</div>
-        <div class="roadmap-title">심화 연구 + 논문 집필</div>
-        <div class="roadmap-tags">
-          <span class="roadmap-tag">딥러닝</span>
-          <span class="roadmap-tag">NLP/의료영상</span>
-          <span class="roadmap-tag">생성형AI</span>
-          <span class="roadmap-tag">학위논문</span>
-          <span class="roadmap-tag">SCIE 투고</span>
-        </div>
-      </div>
-      <div class="roadmap-card">
-        <div class="roadmap-year">DOCTORAL</div>
-        <div class="roadmap-title">독립적 연구 수행 + 국제 성과</div>
-        <div class="roadmap-tags">
-          <span class="roadmap-tag">정밀의료 AI</span>
-          <span class="roadmap-tag">의료데이터 거버넌스</span>
-          <span class="roadmap-tag">XAI</span>
-          <span class="roadmap-tag">국제학술대회</span>
-          <span class="roadmap-tag">특허</span>
-        </div>
-      </div>
-      <div class="roadmap-card">
-        <div class="roadmap-year">CAREER</div>
-        <div class="roadmap-title">졸업 후 진로</div>
-        <div class="roadmap-tags">
-          <span class="roadmap-tag">대학교수</span>
-          <span class="roadmap-tag">병원 AI연구원</span>
-          <span class="roadmap-tag">제약바이오</span>
-          <span class="roadmap-tag">디지털헬스 스타트업</span>
-          <span class="roadmap-tag">국가기관</span>
-        </div>
-      </div>
+      <div class="roadmap-card"><div class="roadmap-year">MASTER'S 1차년도</div><div class="roadmap-title">연구 기초 + AI 리터러시</div><div class="roadmap-tags"><span class="roadmap-tag">보건통계학</span><span class="roadmap-tag">머신러닝</span><span class="roadmap-tag">의료AI 개론</span><span class="roadmap-tag">연구방법론</span><span class="roadmap-tag">Python/R</span></div></div>
+      <div class="roadmap-card"><div class="roadmap-year">MASTER'S 2차년도</div><div class="roadmap-title">심화 연구 + 논문 집필</div><div class="roadmap-tags"><span class="roadmap-tag">딥러닝</span><span class="roadmap-tag">NLP/의료영상</span><span class="roadmap-tag">생성형AI</span><span class="roadmap-tag">학위논문</span><span class="roadmap-tag">SCIE 투고</span></div></div>
+      <div class="roadmap-card"><div class="roadmap-year">DOCTORAL</div><div class="roadmap-title">독립적 연구 수행 + 국제 성과</div><div class="roadmap-tags"><span class="roadmap-tag">정밀의료 AI</span><span class="roadmap-tag">의료데이터 거버넌스</span><span class="roadmap-tag">XAI</span><span class="roadmap-tag">국제학술대회</span><span class="roadmap-tag">특허</span></div></div>
+      <div class="roadmap-card"><div class="roadmap-year">CAREER</div><div class="roadmap-title">졸업 후 진로</div><div class="roadmap-tags"><span class="roadmap-tag">대학교수</span><span class="roadmap-tag">병원 AI연구원</span><span class="roadmap-tag">제약바이오</span><span class="roadmap-tag">디지털헬스 스타트업</span><span class="roadmap-tag">국가기관</span></div></div>
     </div>
   </div>
 </section>
@@ -1354,34 +971,10 @@
     <h2 class="section-title">연구 하이라이트</h2>
     <p class="section-desc">AI헬스케어융합학과가 수행 중인 주요 연구 분야</p>
     <div class="showcase-grid">
-      <div class="showcase-card">
-        <img class="showcase-img" src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=600&h=400&fit=crop&crop=center" alt="의료데이터">
-        <div class="showcase-info">
-          <h4>📊 의료데이터 가치평가 · ISO 국제표준</h4>
-          <p>ISO/TS 26040 의료데이터 가치평가 모델 개발. 비정형 의료데이터의 품질·수집·활용 가치를 객관적으로 측정하는 국제 표준 연구</p>
-        </div>
-      </div>
-      <div class="showcase-card">
-        <img class="showcase-img" src="https://images.unsplash.com/photo-1559757175-5700dde675bc?w=600&h=400&fit=crop&crop=center" alt="GenAI">
-        <div class="showcase-info">
-          <h4>🤖 생성형 AI 기반 갑상선 질환 챗봇 (Thyro-GenAI)</h4>
-          <p>RAG(Retrieval-Augmented Generation) 기반 개인화 갑상선 질환 관리 챗봇 시스템 개발 및 JCM 출판</p>
-        </div>
-      </div>
-      <div class="showcase-card">
-        <img class="showcase-img" src="https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=600&h=400&fit=crop&crop=center" alt="NLP 우울증">
-        <div class="showcase-info">
-          <h4>🧠 NLP 기반 우울증 중증도 진단 분류</h4>
-          <p>자연어처리를 활용한 정신질환 진단·예측 모델 개발. 미국 특허 출원 3건, 국내 특허 등록 1건</p>
-        </div>
-      </div>
-      <div class="showcase-card">
-        <img class="showcase-img" src="https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=600&h=400&fit=crop&crop=center" alt="간호AI">
-        <div class="showcase-info">
-          <h4>🏥 ICU 간호사 인수인계 오류 방지 AI (ING-AI)</h4>
-          <p>Nursing-smaller-foundation LLM 기반 ICU 간호사 보고서 오류 방지를 위한 Nuring Generative AI 구축 및 실증</p>
-        </div>
-      </div>
+      <div class="showcase-card"><img class="showcase-img" src="https://images.unsplash.com/photo-1576091160399-112ba8d25d1d?w=600&h=400&fit=crop" alt="의료데이터"><div class="showcase-info"><h4>📊 의료데이터 가치평가 · ISO 국제표준</h4><p>ISO/TS 26040 의료데이터 가치평가 모델 개발. 비정형 의료데이터의 품질·수집·활용 가치를 객관적으로 측정하는 국제 표준 연구</p></div></div>
+      <div class="showcase-card"><img class="showcase-img" src="https://images.unsplash.com/photo-1559757175-5700dde675bc?w=600&h=400&fit=crop" alt="GenAI"><div class="showcase-info"><h4>🤖 생성형 AI 기반 갑상선 질환 챗봇 (Thyro-GenAI)</h4><p>RAG(Retrieval-Augmented Generation) 기반 개인화 갑상선 질환 관리 챗봇 시스템 개발 및 JCM 출판</p></div></div>
+      <div class="showcase-card"><img class="showcase-img" src="https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?w=600&h=400&fit=crop" alt="NLP"><div class="showcase-info"><h4>🧠 NLP 기반 우울증 중증도 진단 분류</h4><p>자연어처리를 활용한 정신질환 진단·예측 모델 개발. 미국 특허 출원 3건, 국내 특허 등록 1건</p></div></div>
+      <div class="showcase-card"><img class="showcase-img" src="https://images.unsplash.com/photo-1587854692152-cbe660dbde88?w=600&h=400&fit=crop" alt="간호AI"><div class="showcase-info"><h4>🏥 ICU 간호사 인수인계 오류 방지 AI (ING-AI)</h4><p>Nursing-smaller-foundation LLM 기반 ICU 간호사 보고서 오류 방지를 위한 Nuring Generative AI 구축 및 실증</p></div></div>
     </div>
   </div>
 </section>
@@ -1393,42 +986,9 @@
     <h2 class="section-title">우리의 이야기</h2>
     <p class="section-desc">교수진과 연구원들이 전하는 이야기</p>
     <div class="voices-grid">
-      <div class="voice-card">
-        <div class="voice-quote">
-          의료를 이해하면서 AI를 설계할 수 있는 연구자, 그것이 지금 산업과 학계가 필요로 하는 인재상입니다. 우리 학과는 12개 랩이 함께 그런 인재를 키워냅니다.
-        </div>
-        <div class="voice-author">
-          <div class="voice-avatar">👨‍🏫</div>
-          <div>
-            <div class="voice-name">학과장 교수</div>
-            <div class="voice-role">AI헬스케어융합학과 · RISE 사업단</div>
-          </div>
-        </div>
-      </div>
-      <div class="voice-card">
-        <div class="voice-quote">
-          AI 시대에 고품질 의료 데이터의 가치 평가와 활용은 필수입니다. 우리 연구소는 ISO 국제표준 개발을 통해 글로벌 의료 데이터 거래의 기반을 만들어가고 있습니다.
-        </div>
-        <div class="voice-author">
-          <div class="voice-avatar">🔬</div>
-          <div>
-            <div class="voice-name">김명관 교수</div>
-            <div class="voice-role">정보의학교실 AI 정보의학연구소</div>
-          </div>
-        </div>
-      </div>
-      <div class="voice-card">
-        <div class="voice-quote">
-          병원 데이터팀에서 일하면서 의과학대학 출신이라는 점이 큰 차별점이 됩니다. 의료 도메인을 깊이 이해하는 AI 연구자는 정말 드뭅니다.
-        </div>
-        <div class="voice-author">
-          <div class="voice-avatar">👩‍💼</div>
-          <div>
-            <div class="voice-name">석사 졸업생</div>
-            <div class="voice-role">대학병원 AI데이터팀 재직</div>
-          </div>
-        </div>
-      </div>
+      <div class="voice-card"><div class="voice-quote">의료를 이해하면서 AI를 설계할 수 있는 연구자, 그것이 지금 산업과 학계가 필요로 하는 인재상입니다. 우리 학과는 12개 랩이 함께 그런 인재를 키워냅니다.</div><div class="voice-author"><div class="voice-avatar">👨‍🏫</div><div><div class="voice-name">학과장 교수</div><div class="voice-role">AI헬스케어융합학과 · RISE 사업단</div></div></div></div>
+      <div class="voice-card"><div class="voice-quote">AI 시대에 고품질 의료 데이터의 가치 평가와 활용은 필수입니다. 우리 연구소는 ISO 국제표준 개발을 통해 글로벌 의료 데이터 거래의 기반을 만들어가고 있습니다.</div><div class="voice-author"><div class="voice-avatar">🔬</div><div><div class="voice-name">김명관 교수</div><div class="voice-role">정보의학교실 AI 정보의학연구소</div></div></div></div>
+      <div class="voice-card"><div class="voice-quote">병원 데이터팀에서 일하면서 의과학대학 출신이라는 점이 큰 차별점이 됩니다. 의료 도메인을 깊이 이해하는 AI 연구자는 정말 드뭅니다.</div><div class="voice-author"><div class="voice-avatar">👩‍💼</div><div><div class="voice-name">석사 졸업생</div><div class="voice-role">대학병원 AI데이터팀 재직</div></div></div></div>
     </div>
   </div>
 </section>
@@ -1440,7 +1000,7 @@
     <h2 class="section-title">궁금한 게 있다면, AI에게 물어보세요</h2>
     <p class="section-desc">화면 우측 하단의 AI 아바타가 실시간으로 답해드립니다</p>
     <div style="text-align:center; margin-top:2rem;">
-      <button onclick="togglePip()" style="padding: 1rem 2.5rem; background: var(--gradient-1); border: none; border-radius: 12px; color: var(--primary); font-weight: 700; font-size: 1rem; cursor: pointer; font-family: inherit; box-shadow: 0 8px 32px var(--accent-glow); transition: all 0.3s;">
+      <button onclick="togglePip()" style="padding: 1rem 2.5rem; background: var(--gradient-1); border: none; border-radius: 12px; color: var(--primary); font-weight: 700; font-size: 1rem; cursor: pointer; font-family: inherit; box-shadow: 0 8px 32px var(--accent-glow);">
         🤖 AI 아바타와 대화하기
       </button>
     </div>
@@ -1475,24 +1035,22 @@
           <span class="btn-text">▶ 아바타 시작</span>
           <span class="spinner"></span>
         </button>
-        <button class="pip-btn stop" id="closeBtn" onclick="closeSession()" disabled>
-          ■ 종료
-        </button>
+        <button class="pip-btn stop" id="closeBtn" onclick="closeSession()" disabled>■ 종료</button>
       </div>
     </div>
 
     <div class="pip-chat" id="chatHistory"></div>
 
     <div class="pip-voice-status" id="voiceStatus">
-      <div class="voice-indicator" id="voiceIndicator">
+      <div class="voice-indicator">
         <span class="voice-dot"></span>
         <span class="voice-dot"></span>
         <span class="voice-dot"></span>
       </div>
-      <span class="voice-label" id="voiceLabel">듣고 있어요...</span>
+      <span id="voiceLabel">듣고 있어요...</span>
     </div>
 
-    <div class="pip-quick-row" id="quickPrompts">
+    <div class="pip-quick-row">
       <button class="pip-quick-btn" onclick="quickAsk('이 학과가 뭐 하는 곳이에요?')">학과 소개</button>
       <button class="pip-quick-btn" onclick="quickAsk('어떤 연구실이 있나요?')">연구실</button>
       <button class="pip-quick-btn" onclick="quickAsk('지원 조건이 어떻게 되나요?')">입학</button>
@@ -1500,14 +1058,9 @@
     </div>
 
     <div class="pip-input-row">
-      <input
-        type="text"
-        class="pip-input"
-        id="taskInput"
-        placeholder="텍스트로 질문하기"
-        disabled
-        onkeydown="if(event.key==='Enter') sendMessage()"
-      />
+      <input type="text" class="pip-input" id="taskInput"
+        placeholder="텍스트로 질문하기" disabled
+        onkeydown="if(event.key==='Enter') sendMessage()" />
       <button class="pip-send-btn" id="sendBtn" onclick="sendMessage()" disabled>전송</button>
     </div>
   </div>
@@ -1535,14 +1088,12 @@
 </footer>
 
 <!-- ─── Floating Avatar Button ─── -->
-<button class="floating-avatar-btn" id="floatingBtn" onclick="togglePip()" title="AI 아바타 상담">
-  🤖
-</button>
+<button class="floating-avatar-btn" id="floatingBtn" onclick="togglePip()" title="AI 아바타 상담">🤖</button>
 
+<!-- ═══════════════════════════════════════════════
+     PIP 위젯 토글 / 최소화 / 드래그
+═══════════════════════════════════════════════ -->
 <script>
-  // ═══════════════════════════════════════════════════
-  //  PIP Widget 토글 / 최소화 / 드래그
-  // ═══════════════════════════════════════════════════
   function togglePip() {
     const pip = document.getElementById('pipWidget');
     const btn = document.getElementById('floatingBtn');
@@ -1557,11 +1108,10 @@
   }
 
   function toggleMinimize() {
-    const pip = document.getElementById('pipWidget');
-    pip.classList.toggle('minimized');
+    document.getElementById('pipWidget').classList.toggle('minimized');
   }
 
-  // ─── 드래그 이동 ───
+  // 드래그
   (function() {
     const pip = document.getElementById('pipWidget');
     const header = document.getElementById('pipHeader');
@@ -1577,34 +1127,23 @@
     function dragStart(e) {
       isDragging = true;
       const ev = e.touches ? e.touches[0] : e;
-      startX = ev.clientX;
-      startY = ev.clientY;
+      startX = ev.clientX; startY = ev.clientY;
       const rect = pip.getBoundingClientRect();
-      origX = rect.left;
-      origY = rect.top;
+      origX = rect.left; origY = rect.top;
       pip.style.transition = 'none';
       if (e.touches) e.preventDefault();
     }
-
     function dragMove(e) {
       if (!isDragging) return;
       const ev = e.touches ? e.touches[0] : e;
-      const dx = ev.clientX - startX;
-      const dy = ev.clientY - startY;
-      let newX = origX + dx;
-      let newY = origY + dy;
-      // 화면 밖으로 안 나가게
-      const maxX = window.innerWidth - pip.offsetWidth;
-      const maxY = window.innerHeight - pip.offsetHeight;
-      newX = Math.max(0, Math.min(newX, maxX));
-      newY = Math.max(0, Math.min(newY, maxY));
-      pip.style.left = newX + 'px';
-      pip.style.top = newY + 'px';
-      pip.style.right = 'auto';
-      pip.style.bottom = 'auto';
+      let newX = origX + ev.clientX - startX;
+      let newY = origY + ev.clientY - startY;
+      newX = Math.max(0, Math.min(newX, window.innerWidth - pip.offsetWidth));
+      newY = Math.max(0, Math.min(newY, window.innerHeight - pip.offsetHeight));
+      pip.style.left = newX + 'px'; pip.style.top = newY + 'px';
+      pip.style.right = 'auto'; pip.style.bottom = 'auto';
       if (e.touches) e.preventDefault();
     }
-
     function dragEnd() {
       isDragging = false;
       pip.style.transition = 'all 0.3s ease';
@@ -1612,34 +1151,44 @@
   })();
 </script>
 
-<script>
-  // ═══════════════════════════════════════════════════════
-  //  HeyGen Interactive Avatar + OpenAI GPT + 자동 음성 대화
-  //  🎤 자동 듣기 → GPT 상담사 → 아바타 대답 → 다시 듣기
-  // ═══════════════════════════════════════════════════════
+<!-- ═══════════════════════════════════════════════════════════════
+     ✅ LiveAvatar SDK — esm.sh ES Module 방식 (CDN UMD 대체)
+     onclick 핸들러가 전역 함수를 호출하므로 window에 명시적 등록
+═══════════════════════════════════════════════════════════════ -->
+<script type="module">
+  // ── esm.sh로 npm 패키지 직접 import ──
 
-  const AVATAR_CONFIG = {
-    avatarId: "e2eb35c947644f09820aa3a4f9c15488",
-  };
+  const {
+    default: StreamingAvatar,
+    AvatarQuality,
+    StreamingEvents,
+    TaskType,
+    VoiceEmotion
+  } = await import("https://esm.sh/@heygen/streaming-avatar@latest");
 
-  let sessionInfo = null;
-  let room = null;
-  let sessionToken = null;
-  let chatHistory = [];
-  let recognition = null;
-  let isListening = false;
-  let isProcessing = false;     // GPT 처리 중
-  let isSpeaking = false;       // 아바타 말하는 중
-  let autoListenEnabled = true; // 자동 듣기 활성화
-  let silenceTimer = null;      // 무음 타이머
+  console.log("[SDK] esm.sh 로드 완료", { StreamingAvatar, TaskType });
 
+  // ── 아바타 설정 ──
+  const AVATAR_ID = "e2eb35c947644f09820aa3a4f9c15488";
+  const VOICE_ID  = "15d128072e194dc399d2898967941897";
+
+  // ── 상태 변수 ──
+  let avatar       = null;
+  let chatHistory  = [];
+  let recognition  = null;
+  let isListening  = false;
+  let isProcessing = false;
+  let isSpeaking   = false;
+  let autoListen   = true;
+  let silenceTimer = null;
+
+  // ── DOM ──
   const mediaEl       = document.getElementById("mediaElement");
   const startBtnEl    = document.getElementById("startBtn");
   const closeBtnEl    = document.getElementById("closeBtn");
   const taskInput     = document.getElementById("taskInput");
   const sendBtnEl     = document.getElementById("sendBtn");
   const placeholder   = document.getElementById("avatarPlaceholder");
-  const logEl         = document.getElementById("logArea");
   const statusDot     = document.getElementById("statusDot");
   const statusText    = document.getElementById("statusText");
   const chatHistoryEl = document.getElementById("chatHistory");
@@ -1651,67 +1200,30 @@
     statusDot.classList.toggle("active", active);
   }
 
-  function log(msg) {
-    console.log(`[Avatar] ${msg}`);
-    if (logEl) {
-      logEl.classList.add("has-content");
-      logEl.textContent = `[${new Date().toLocaleTimeString()}] ${msg}\n` + logEl.textContent;
-    }
-  }
-
-  // ── 음성 상태 표시 ──
   function setVoiceState(state) {
-    voiceStatusEl.style.display = "flex";
     voiceStatusEl.className = "pip-voice-status";
-    switch (state) {
-      case "listening":
-        voiceStatusEl.classList.add("active");
-        voiceLabelEl.textContent = "🎤 듣고 있어요... 말씀하세요";
-        break;
-      case "speaking":
-        voiceStatusEl.classList.add("active", "speaking");
-        voiceLabelEl.textContent = "🗣️ 답변하고 있어요...";
-        break;
-      case "thinking":
-        voiceStatusEl.classList.add("active", "thinking-state");
-        voiceLabelEl.textContent = "💭 답변을 준비하고 있어요...";
-        break;
-      case "idle":
-        voiceStatusEl.style.display = "none";
-        break;
-    }
+    if (state === "idle") { voiceStatusEl.style.display = "none"; return; }
+    voiceStatusEl.style.display = "flex";
+    voiceStatusEl.classList.add("active");
+    const labels = {
+      listening: "🎤 듣고 있어요... 말씀하세요",
+      speaking:  "🗣️ 답변하고 있어요...",
+      thinking:  "💭 답변을 준비하고 있어요..."
+    };
+    if (state === "speaking")  voiceStatusEl.classList.add("speaking");
+    if (state === "thinking")  voiceStatusEl.classList.add("thinking-state");
+    voiceLabelEl.textContent = labels[state] || "";
   }
 
-  function addChatBubble(text, type) {
-    const bubble = document.createElement("div");
-    bubble.className = `chat-bubble ${type}`;
-    bubble.textContent = text;
-    chatHistoryEl.appendChild(bubble);
+  function addBubble(text, type) {
+    const b = document.createElement("div");
+    b.className = `chat-bubble ${type}`;
+    b.textContent = text;
+    chatHistoryEl.appendChild(b);
     chatHistoryEl.scrollTop = chatHistoryEl.scrollHeight;
-    return bubble;
   }
 
-  // ── 서버리스 함수 호출 ──
-  async function callProxy(endpoint, payload) {
-    try {
-      const res = await fetch("/.netlify/functions/heygen-proxy", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ endpoint, token: sessionToken, payload })
-      });
-      if (!res.ok) {
-        const errText = await res.text();
-        log(`프록시 오류 (${res.status}): ${errText}`);
-        throw new Error(`Proxy ${res.status}`);
-      }
-      return res.json();
-    } catch (err) {
-      log(`프록시 호출 실패: ${err.message}`);
-      throw err;
-    }
-  }
-
-  // ── GPT 상담사 ──
+  // ── GPT 호출 ──
   async function askGPT(message) {
     try {
       const res = await fetch("/.netlify/functions/openai-chat", {
@@ -1722,41 +1234,180 @@
       if (!res.ok) return "죄송합니다, 잠시 후 다시 시도해 주세요.";
       const data = await res.json();
       return data.reply || "답변을 생성하지 못했습니다.";
-    } catch (err) {
-      log(`GPT 오류: ${err.message}`);
+    } catch {
       return "네트워크 오류가 발생했습니다.";
     }
   }
 
   // ── 토큰 발급 ──
-  async function getSessionToken() {
-    try {
-      log("토큰 요청 중...");
-      const res = await fetch("/.netlify/functions/heygen-token", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" }
-      });
-      if (!res.ok) return null;
-      const data = await res.json();
-      return data.data?.token;
-    } catch (err) { return null; }
+  async function getToken() {
+    const res = await fetch("/.netlify/functions/heygen-token", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" }
+    });
+    if (!res.ok) throw new Error("토큰 발급 실패");
+    const data = await res.json();
+    const token = data.data?.token;
+    if (!token) throw new Error("토큰 없음");
+    return token;
   }
 
-  // ═══════════════════════════════════════
-  //  자동 연속 음성인식
-  // ═══════════════════════════════════════
+  // ════════════════════════════════════════════
+  //  세션 시작
+  // ════════════════════════════════════════════
+  async function startSession() {
+    startBtnEl.classList.add("loading");
+    startBtnEl.disabled = true;
+    setStatus("연결 중...");
 
+    try {
+      const token = await getToken();
+
+      avatar = new StreamingAvatar({ token });
+
+      avatar.on(StreamingEvents.STREAM_READY, (event) => {
+        if (event.detail) {
+          mediaEl.srcObject = event.detail;
+          mediaEl.play().catch(() => {});
+          placeholder.style.display = "none";
+        }
+      });
+
+      avatar.on(StreamingEvents.AVATAR_START_TALKING, () => {
+        isSpeaking = true;
+        setVoiceState("speaking");
+      });
+
+      avatar.on(StreamingEvents.AVATAR_STOP_TALKING, () => {
+        isSpeaking = false;
+        isProcessing = false;
+        setStatus("대화 중", true);
+        if (autoListen && avatar) setTimeout(startListening, 500);
+        else setVoiceState("idle");
+      });
+
+      avatar.on(StreamingEvents.STREAM_DISCONNECTED, () => {
+        setStatus("연결 끊김");
+      });
+
+      await avatar.createStartAvatar({
+        quality:    AvatarQuality.Medium,
+        avatarName: AVATAR_ID,
+        voice: {
+          voiceId: VOICE_ID,
+          rate:    1.0,
+          emotion: VoiceEmotion.FRIENDLY
+        },
+        language:           "ko",
+        disableIdleTimeout: true
+      });
+
+      // UI 활성화
+      chatHistory = [];
+      chatHistoryEl.innerHTML = "";
+      closeBtnEl.disabled = false;
+      taskInput.disabled  = false;
+      sendBtnEl.disabled  = false;
+      setStatus("연결됨", true);
+
+      // 인사말
+      const greeting = "안녕하세요! 차 의과학 대학교 에이 아이 헬스케어 융합학과 대학원 상담을 도와드릴게요. 궁금하신 점을 편하게 말씀해 주세요.";
+      addBubble(greeting, "ai");
+      isSpeaking = true;
+      setVoiceState("speaking");
+      await avatar.speak({ text: greeting, taskType: TaskType.REPEAT });
+
+      // 음성인식 초기화 (AVATAR_STOP_TALKING에서 자동 시작)
+      autoListen = true;
+      initSpeechRecognition();
+
+    } catch (err) {
+      console.error("[Avatar] 시작 오류:", err);
+      setStatus("오류 발생");
+      alert("아바타 시작 중 오류가 발생했습니다:\n" + err.message);
+    } finally {
+      startBtnEl.classList.remove("loading");
+      startBtnEl.disabled = false;
+    }
+  }
+
+  // ════════════════════════════════════════════
+  //  세션 종료
+  // ════════════════════════════════════════════
+  async function closeSession() {
+    if (!avatar) return;
+    setStatus("종료 중...");
+    autoListen = false;
+    stopListening();
+    try { await avatar.stopAvatar(); } catch (e) { console.error(e); }
+    avatar = null;
+    mediaEl.srcObject = null;
+    placeholder.style.display = "flex";
+    chatHistory  = [];
+    isProcessing = false;
+    isSpeaking   = false;
+    recognition  = null;
+    closeBtnEl.disabled = true;
+    taskInput.disabled  = true;
+    sendBtnEl.disabled  = true;
+    setVoiceState("idle");
+    setStatus("대기 중");
+  }
+
+  // ════════════════════════════════════════════
+  //  대화 처리
+  // ════════════════════════════════════════════
+  async function processUserInput(text) {
+    if (!text || !avatar || isProcessing) return;
+    isProcessing = true;
+    addBubble(text, "user");
+
+    setVoiceState("thinking");
+    const reply = await askGPT(text);
+
+    chatHistory.push({ role: "user", content: text });
+    chatHistory.push({ role: "assistant", content: reply });
+    if (chatHistory.length > 20) chatHistory = chatHistory.slice(-20);
+
+    addBubble(reply, "ai");
+    isSpeaking = true;
+    setVoiceState("speaking");
+
+    try {
+      await avatar.speak({ text: reply, taskType: TaskType.REPEAT });
+    } catch (e) {
+      console.error("[speak]", e);
+      isProcessing = false;
+      isSpeaking   = false;
+      if (autoListen) startListening();
+    }
+  }
+
+  function sendMessage() {
+    const text = taskInput.value.trim();
+    if (!text || !avatar) return;
+    taskInput.value = "";
+    stopListening();
+    processUserInput(text);
+  }
+
+  function quickAsk(text) {
+    if (!avatar) return;
+    stopListening();
+    processUserInput(text);
+  }
+
+  // ════════════════════════════════════════════
+  //  음성인식 (Web Speech API)
+  // ════════════════════════════════════════════
   function initSpeechRecognition() {
     const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
-    if (!SR) {
-      log("음성인식 미지원 브라우저 — 텍스트 입력을 이용해 주세요");
-      return false;
-    }
+    if (!SR) { console.warn("[STT] 미지원 브라우저"); return; }
 
     recognition = new SR();
-    recognition.lang = "ko-KR";
-    recognition.interimResults = true;
-    recognition.continuous = true;
+    recognition.lang            = "ko-KR";
+    recognition.interimResults  = true;
+    recognition.continuous      = true;
     recognition.maxAlternatives = 1;
 
     recognition.onstart = () => {
@@ -1767,37 +1418,24 @@
     };
 
     recognition.onresult = (event) => {
-      // 무음 타이머 리셋
       clearTimeout(silenceTimer);
-
-      let interim = "";
-      let final = "";
-
+      let interim = "", final = "";
       for (let i = event.resultIndex; i < event.results.length; i++) {
         const t = event.results[i][0].transcript;
-        if (event.results[i].isFinal) {
-          final += t;
-        } else {
-          interim += t;
-        }
+        if (event.results[i].isFinal) final += t; else interim += t;
       }
-
-      // 실시간 미리보기
       if (interim) taskInput.value = interim;
-
-      // 최종 결과 → 자동 전송
       if (final.trim()) {
         taskInput.value = "";
         stopListening();
         processUserInput(final.trim());
       } else {
-        // 중간 결과 후 2초 무음이면 전송
         silenceTimer = setTimeout(() => {
-          const text = taskInput.value.trim();
-          if (text && text.length > 1) {
+          const t = taskInput.value.trim();
+          if (t && t.length > 1) {
             taskInput.value = "";
             stopListening();
-            processUserInput(text);
+            processUserInput(t);
           }
         }, 2000);
       }
@@ -1805,250 +1443,47 @@
 
     recognition.onerror = (event) => {
       if (event.error === "not-allowed") {
-        alert("마이크 권한이 필요합니다.\n브라우저 주소창 왼쪽의 🔒 아이콘을 클릭하여 마이크를 허용해 주세요.");
-        autoListenEnabled = false;
-      } else if (event.error === "no-speech") {
-        // 무음 — 다시 시작
-        if (autoListenEnabled && sessionInfo && !isProcessing && !isSpeaking) {
-          setTimeout(startListening, 500);
-        }
-      } else {
-        log(`음성인식 오류: ${event.error}`);
+        alert("마이크 권한이 필요합니다.\n주소창 🔒 아이콘에서 마이크를 허용해 주세요.");
+        autoListen = false;
+      } else if (event.error !== "no-speech") {
+        console.warn("[STT] 오류:", event.error);
       }
       isListening = false;
+      if (autoListen && avatar && !isProcessing && !isSpeaking) setTimeout(startListening, 800);
     };
 
     recognition.onend = () => {
       isListening = false;
-      // 자동 재시작 (처리 중이 아닐 때)
-      if (autoListenEnabled && sessionInfo && !isProcessing && !isSpeaking) {
-        setTimeout(startListening, 600);
-      }
+      taskInput.placeholder = "텍스트로 질문하기";
+      if (autoListen && avatar && !isProcessing && !isSpeaking) setTimeout(startListening, 600);
     };
-
-    return true;
   }
 
   function startListening() {
-    if (!recognition || isListening || isProcessing || isSpeaking || !sessionInfo) return;
-    try {
-      recognition.start();
-    } catch (e) {
-      // 이미 시작된 경우 무시
-    }
+    if (!recognition || isListening || isProcessing || isSpeaking || !avatar) return;
+    try { recognition.start(); } catch (e) {}
   }
 
   function stopListening() {
     clearTimeout(silenceTimer);
     isListening = false;
-    if (recognition) {
-      try { recognition.stop(); } catch (e) {}
-    }
+    if (recognition) { try { recognition.stop(); } catch (e) {} }
   }
 
-  // ═══════════════════════════════════════
-  //  대화 처리 파이프라인
-  // ═══════════════════════════════════════
+  // ════════════════════════════════════════════
+  //  ⚠️ onclick 핸들러용 전역 노출
+  //  <script type="module"> 안의 함수는 기본적으로 전역에 없으므로
+  //  window에 명시적으로 등록해야 HTML onclick이 작동합니다
+  // ════════════════════════════════════════════
+  window.startSession  = startSession;
+  window.closeSession  = closeSession;
+  window.sendMessage   = sendMessage;
+  window.quickAsk      = quickAsk;
 
-  async function processUserInput(text) {
-    if (!text || !sessionInfo || isProcessing) return;
-    isProcessing = true;
-
-    // 1) 사용자 메시지 표시
-    addChatBubble(text, "user");
-    log(`질문: ${text}`);
-
-    // 2) GPT에게 질문
-    setVoiceState("thinking");
-    const reply = await askGPT(text);
-
-    // 3) 히스토리 저장
-    chatHistory.push({ role: "user", content: text });
-    chatHistory.push({ role: "assistant", content: reply });
-
-    // 4) 답변 버블 표시
-    addChatBubble(reply, "ai");
-    log(`답변: ${reply.substring(0, 50)}...`);
-
-    // 5) 아바타가 답변 (repeat 모드: GPT 답변만 그대로 읽기)
-    isSpeaking = true;
-    setVoiceState("speaking");
-
-    await callProxy("/v1/streaming.task", {
-      session_id: sessionInfo.session_id,
-      text: reply,
-      task_type: "repeat"
-    });
-
-    // 6) 아바타 말하기 예상 시간 후 자동으로 다시 듣기
-    //    한국어 평균 5자/초 기준으로 대기
-    const speakDuration = Math.max(3000, (reply.length / 5) * 1000 + 1500);
-    setTimeout(() => {
-      isSpeaking = false;
-      isProcessing = false;
-      setStatus("대화 중", true);
-
-      if (autoListenEnabled && sessionInfo) {
-        startListening();
-      } else {
-        setVoiceState("idle");
-      }
-    }, speakDuration);
-  }
-
-  // 텍스트 전송 (입력창)
-  async function sendMessage() {
-    const text = taskInput.value.trim();
-    if (!text || !sessionInfo) return;
-    taskInput.value = "";
-    stopListening();
-    processUserInput(text);
-  }
-
-  function quickAsk(text) {
-    if (!sessionInfo) return;
-    stopListening();
-    processUserInput(text);
-  }
-
-  // ═══════════════════════════════════════
-  //  세션 시작 / 종료
-  // ═══════════════════════════════════════
-
-  async function startSession() {
-    startBtnEl.classList.add("loading");
-    startBtnEl.disabled = true;
-    setStatus("연결 중...");
-    log("세션 시작 요청...");
-
-    try {
-      sessionToken = await getSessionToken();
-      if (!sessionToken) throw new Error("토큰 발급 실패");
-      log("토큰 발급 완료");
-
-      const createRes = await callProxy("/v1/streaming.new", {
-        avatar_id: AVATAR_CONFIG.avatarId,
-        quality: "medium",
-        voice: { voice_id: "15d128072e194dc399d2898967941897", rate: 1.0, emotion: "friendly" },
-        language: "ko",
-        version: "v2",
-        video_encoding: "H264"
-      });
-
-      if (!createRes.data) throw new Error("세션 생성 실패");
-      sessionInfo = createRes.data;
-      log(`세션 생성 완료`);
-
-      const lk = window.LivekitClient;
-      room = new lk.Room({ adaptiveStream: true, dynacast: true });
-
-      room.on(lk.RoomEvent.TrackSubscribed, (track) => {
-        if (track.kind === "video" || track.kind === "audio") {
-          track.attach(mediaEl);
-          placeholder.style.display = "none";
-        }
-      });
-
-      await room.connect(sessionInfo.url, sessionInfo.access_token);
-      log("LiveKit 연결 완료");
-
-      await callProxy("/v1/streaming.start", {
-        session_id: sessionInfo.session_id
-      });
-
-      // UI 활성화
-      chatHistory = [];
-      chatHistoryEl.innerHTML = "";
-      closeBtnEl.disabled = false;
-      taskInput.disabled = false;
-      sendBtnEl.disabled = false;
-
-      // 인사 메시지 (repeat 모드!)
-      const greeting = "안녕하세요! 차 의과학 대학교, 에이 아이 헬스케어 융합학과 대학원 상담을 도와드릴게요. 궁금하신 점을 편하게 말씀해 주세요.";
-      addChatBubble(greeting, "ai");
-      isSpeaking = true;
-      setVoiceState("speaking");
-
-      await callProxy("/v1/streaming.task", {
-        session_id: sessionInfo.session_id,
-        text: greeting,
-        task_type: "repeat"
-      });
-
-      log("아바타 활성화 — 자동 음성 대화 모드");
-
-      // 인사 끝난 후 자동 듣기 시작
-      const greetDuration = Math.max(3000, (greeting.length / 5) * 1000 + 1500);
-      setTimeout(() => {
-        isSpeaking = false;
-        isProcessing = false;
-        setStatus("대화 중", true);
-
-        // 음성인식 시작
-        autoListenEnabled = true;
-        const ok = initSpeechRecognition();
-        if (ok) {
-          startListening();
-        } else {
-          setVoiceState("idle");
-          taskInput.focus();
-        }
-      }, greetDuration);
-
-    } catch (err) {
-      log(`오류: ${err.message}`);
-      setStatus("오류 발생");
-    } finally {
-      startBtnEl.classList.remove("loading");
-      startBtnEl.disabled = false;
-    }
-  }
-
-  async function closeSession() {
-    if (!sessionInfo) return;
-    setStatus("종료 중...");
-    log("세션 종료...");
-
-    autoListenEnabled = false;
-    stopListening();
-
-    try {
-      await callProxy("/v1/streaming.stop", {
-        session_id: sessionInfo.session_id
-      });
-    } catch (e) {}
-
-    if (room) { await room.disconnect(); room = null; }
-    mediaEl.srcObject = null;
-    placeholder.style.display = "flex";
-    sessionInfo = null;
-    sessionToken = null;
-    chatHistory = [];
-    isProcessing = false;
-    isSpeaking = false;
-    recognition = null;
-
-    startBtnEl.disabled = false;
-    closeBtnEl.disabled = true;
-    taskInput.disabled = true;
-    sendBtnEl.disabled = true;
-    setVoiceState("idle");
-    setStatus("대기 중");
-    log("세션 종료 완료");
-  }
-
-  // ═══════════════════════════════════════════════════════
-  //  Scroll Animations & Nav
-  // ═══════════════════════════════════════════════════════
-
+  // ── 스크롤 애니메이션 & 네비게이션 ──
   const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add("visible");
-      }
-    });
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add("visible"); });
   }, { threshold: 0.1 });
-
   document.querySelectorAll(".animate-on-scroll").forEach(el => observer.observe(el));
 
   window.addEventListener("scroll", () => {
@@ -2056,9 +1491,10 @@
   });
 
   window.addEventListener("beforeunload", () => {
-    if (sessionInfo) closeSession();
+    if (avatar) closeSession();
   });
 </script>
+
 
 </body>
 </html>
